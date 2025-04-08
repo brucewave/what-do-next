@@ -19,6 +19,7 @@ export default function OperationToDo() {
 
     const [showLevelUp, setShowLevelUp] = useState(false);
     const [completedCount, setCompletedCount] = useState(0);
+    const [showCompleted, setShowCompleted] = useState(false);
 
     const [showNameModal, setShowNameModal] = useState(false);
     const [newPetName, setNewPetName] = useState('');
@@ -109,6 +110,14 @@ export default function OperationToDo() {
         }
     }
 
+    function handleNameChange(e) {
+        e.preventDefault();
+        if (newPetName.trim() !== '') {
+            setPetName(newPetName.trim());
+            setShowNameModal(false);
+        }
+    }
+
     const getPetEmoji = () => {
         const pets = ['🐣', '🐥', '🐤', '🦆', '🦢', '🦅'];
         return pets[Math.min(petLevel - 1, pets.length - 1)];
@@ -119,13 +128,8 @@ export default function OperationToDo() {
         return thresholds[petLevel - 1] || 'MAX';
     };
 
-    function handleNameChange(e) {
-        e.preventDefault();
-        if (newPetName.trim() !== '') {
-            setPetName(newPetName.trim());
-            setShowNameModal(false);
-        }
-    }
+    const uncompletedTodos = todos.filter(todo => todo.states === 'no');
+    const completedTodos = todos.filter(todo => todo.states === 'yes');
 
     return (
         <div className="todo-container">
@@ -193,43 +197,102 @@ export default function OperationToDo() {
                 </form>
             </div>
             
-            <div className="todo-list">
-                {todos.map(todo => (
-                    <div key={todo.id} className="todo-item">
-                        <div className="todo-content">
-                            <button 
-                                className={`checkbox ${todo.states === 'yes' ? 'checked' : ''}`}
-                                onClick={() => changeState(todo.id)}
-                            >
-                                {todo.states === 'yes' && <span>✓</span>}
-                            </button>
-                            {editingId === todo.id ? (
-                                <input
-                                    type="text"
-                                    value={editText}
-                                    onChange={(e) => setEditText(e.target.value)}
-                                    onBlur={() => saveEdit(todo.id)}
-                                    onKeyDown={(e) => handleKeyDown(e, todo.id)}
-                                    className="edit-input"
-                                    autoFocus
-                                />
-                            ) : (
-                                <span 
-                                    className={`todo-title ${todo.states === 'yes' ? 'completed' : ''}`}
-                                    onClick={() => startEditing(todo)}
+            <div className="todo-lists-container">
+                <div className="todo-list-section">
+                    <h2 className="section-title">Active Tasks</h2>
+                    <div className="todo-list">
+                        {uncompletedTodos.map(todo => (
+                            <div key={todo.id} className="todo-item">
+                                <div className="todo-content">
+                                    <button 
+                                        className={`checkbox ${todo.states === 'yes' ? 'checked' : ''}`}
+                                        onClick={() => changeState(todo.id)}
+                                    >
+                                        {todo.states === 'yes' && <span>✓</span>}
+                                    </button>
+                                    {editingId === todo.id ? (
+                                        <input
+                                            type="text"
+                                            value={editText}
+                                            onChange={(e) => setEditText(e.target.value)}
+                                            onBlur={() => saveEdit(todo.id)}
+                                            onKeyDown={(e) => handleKeyDown(e, todo.id)}
+                                            className="edit-input"
+                                            autoFocus
+                                        />
+                                    ) : (
+                                        <span 
+                                            className={`todo-title ${todo.states === 'yes' ? 'completed' : ''}`}
+                                            onClick={() => startEditing(todo)}
+                                        >
+                                            {todo.title}
+                                        </span>
+                                    )}
+                                </div>
+                                <button 
+                                    className="delete-button"
+                                    onClick={() => deleteToDo(todo.id)}
                                 >
-                                    {todo.title}
-                                </span>
-                            )}
-                        </div>
-                        <button 
-                            className="delete-button"
-                            onClick={() => deleteToDo(todo.id)}
-                        >
-                            ×
-                        </button>
+                                    ×
+                                </button>
+                            </div>
+                        ))}
                     </div>
-                ))}
+                </div>
+
+                {completedTodos.length > 0 && (
+                    <div className="todo-list-section completed-section">
+                        <div className="section-header">
+                            <h2 className="section-title">Completed Tasks</h2>
+                            <button 
+                                className="toggle-button"
+                                onClick={() => setShowCompleted(!showCompleted)}
+                            >
+                                {showCompleted ? 'Hide' : 'Show'} ({completedTodos.length})
+                            </button>
+                        </div>
+                        {showCompleted && (
+                            <div className="todo-list completed-list">
+                                {completedTodos.map(todo => (
+                                    <div key={todo.id} className="todo-item completed-item">
+                                        <div className="todo-content">
+                                            <button 
+                                                className="checkbox checked"
+                                                onClick={() => changeState(todo.id)}
+                                            >
+                                                <span>✓</span>
+                                            </button>
+                                            {editingId === todo.id ? (
+                                                <input
+                                                    type="text"
+                                                    value={editText}
+                                                    onChange={(e) => setEditText(e.target.value)}
+                                                    onBlur={() => saveEdit(todo.id)}
+                                                    onKeyDown={(e) => handleKeyDown(e, todo.id)}
+                                                    className="edit-input"
+                                                    autoFocus
+                                                />
+                                            ) : (
+                                                <span 
+                                                    className="todo-title completed"
+                                                    onClick={() => startEditing(todo.id)}
+                                                >
+                                                    {todo.title}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <button 
+                                            className="delete-button"
+                                            onClick={() => deleteToDo(todo.id)}
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )

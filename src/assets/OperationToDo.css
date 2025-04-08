@@ -373,4 +373,64 @@
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+.todo-lists-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.todo-list-section {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    color: #202124;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.toggle-button {
+    background: transparent;
+    border: 1px solid #e0e0e0;
+    color: #5f6368;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.toggle-button:hover {
+    background: #f8f9fa;
+    border-color: #d0d0d0;
+}
+
+.completed-section {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.completed-list {
+    opacity: 0.8;
+}
+
+.completed-item {
+    background: #f1f3f4;
+}
+
+.completed-item:hover {
+    background: #e8eaed;
 } 
